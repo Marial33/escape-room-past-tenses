@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Clockwork Archive — 10th Grade ESL Escape Room</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #0b1120;
+      --bg-panel: #111827;
+      --bg-card: #162033;
+      --brass-primary: #d4af37;
+      --brass-light: #f3d266;
+      --brass-dark: #927018;
+      --emerald-glow: #10b981;
+      --cyan-glow: #38bdf8;
+    }
+
+    body {
+      background-color: var(--bg-deep);
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(212, 175, 55, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 85% 85%, rgba(56, 189, 248, 0.08) 0%, transparent 45%),
+        linear-gradient(180deg, #0b1120 0%, #0f172a 100%);
+      color: #e2e8f0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+    }
+
+    .font-display {
+      font-family: 'Cinzel', Georgia, serif;
+    }
+
+    .font-journal {
+      font-family: 'Crimson Pro', Georgia, serif;
+    }
+
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Subtle brass metallic border & glow */
+    .brass-card {
+      background: linear-gradient(145deg, rgba(22, 32, 51, 0.96), rgba(15, 23, 42, 0.98));
+      border: 1px solid rgba(212, 175, 55, 0.32);
+      box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(243, 210, 102, 0.14);
+    }
+
+    .brass-btn {
+      background: linear-gradient(135deg, #d4af37 0%, #b48a1e 100%);
+      color: #0b1120;
+      font-weight: 700;
+      box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
+      transition: all 0.2s ease;
+    }
+
+    .brass-btn:hover:not(:disabled) {
+      background: linear-gradient(135deg, #f3d266 0%, #d4af37 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+    }
+
+    .brass-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Spinning clockwork gears */
+    @keyframes spinSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes spinReverse {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+
+    .gear-cw {
+      animation: spinSlow 28s linear infinite;
+      transform-origin: center;
+    }
+
+    .gear-ccw {
+      animation: spinReverse 20s linear infinite;
+      transform-origin: center;
+    }
+
+    /* Vault slot glow */
+    .vault-slot-locked {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      color: #64748b;
+    }
+
+    .vault-slot-unlocked {
+      background: linear-gradient(180deg, rgba(16, 185, 129, 0.22), rgba(6, 95, 70, 0.35));
+      border: 1px solid #10b981;
+      color: #6ee7b7;
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.35);
+      animation: popDigit 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes popDigit {
+      0% { transform: scale(0.75); }
+      60% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .shake-anim {
+      animation: shake 0.38s ease-in-out;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0b1120;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #d4af37;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-amber-400/30 selection:text-amber-200">
+
+  <!-- TOP STICKY HUD -->
+  <header class="sticky top-0 z-40 border-b border-amber-500/25 bg-slate-950/90 backdrop-blur-md shadow-lg">
+    <div class="max-w-6xl mx-auto px-3 sm:px-6 py-2.5">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2.5">
+        <!-- Brand & Animated Clockwork Emblem -->
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="relative w-10 h-10 flex items-center justify-center rounded-xl bg-amber-500/10 border border-amber-400/40 shrink-0">
+              <svg class="w-8 h-8 text-amber-400" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                <g class="gear-cw">
+                  <path d="M32 10V6M32 58V54M10 32H6M58 32H54M16.4 16.4L13.6 13.6M50.4 50.4L47.6 47.6M47.6 16.4L50.4 13.6M13.6 50.4L16.4 47.6" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+                  <circle cx="32" cy="32" r="16" stroke="currentColor" stroke-width="3.5"/>
+                </g>
+                <g class="gear-ccw">
+                  <circle cx="32" cy="32" r="7" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="4 3"/>
+                </g>
+              </svg>
+            </div>
+            <div>
+              <h1 class="font-display text-sm sm:text-base md:text-lg font-bold tracking-wider text-amber-300 leading-tight">
+                THE CLOCKWORK ARCHIVE
+              </h1>
+              <p class="text-[11px] sm:text-xs text-slate-400">
+                10th Grade ESL &bull; CEFR A2–B1 &bull; British English
+              </p>
+            </div>
+          </div>
+
+          <!-- Compact Vault Digits on Mobile -->
+          <div class="flex lg:hidden items-center gap-1.5" aria-label="Vault Code Progress">
+            <span class="text-[10px] uppercase tracking-wider text-amber-400/80 font-semibold mr-1">Vault</span>
+            <div id="hud-vault-mobile" class="flex items-center gap-1 font-mono-code text-xs font-bold">
+              <span class="w-6 h-7 rounded flex items-center justify-center vault-slot-locked">?</span>
+              <span class="w-6 h-7 rounded flex items-center justify-center vault-slot-locked">?</span>
+              <span class="w-6 h-7 rounded flex items-center justify-center vault-slot-locked">?</span>
+              <span class="w-6 h-7 rounded flex items-center justify-center vault-slot-locked">?</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scoreboard & Desktop Vault Code -->
+        <div class="flex flex-wrap items-center justify-between lg:justify-end gap-2 sm:gap-3 text-xs">
+          <!-- Score Pills -->
+          <div class="flex items-center gap-1.5 sm:gap-2 bg-slate-900/90 border border-slate-700/70 rounded-xl px-2.5 py-1.5">
+            <div class="px-1.5">
+              <span class="text-[10px] uppercase text-slate-400 block">Total</span>
+              <span id="hud-total" class="font-mono-code text-sm sm:text-base font-bold text-amber-300">0</span>
+            </div>
+            <div class="h-6 w-px bg-slate-700/80"></div>
+            <div class="px-1.5">
+              <span class="text-[10px] uppercase text-slate-400 block">Base</span>
+              <span id="hud-base" class="font-mono-code text-xs sm:text-sm font-semibold text-slate-200">0<span class="text-slate-500">/180</span></span>
+            </div>
+            <div class="h-6 w-px bg-slate-700/80"></div>
+            <div class="px-1.5">
+              <span class="text-[10px] uppercase text-emerald-400/80 block">Bonus</span>
+              <span id="hud-bonus" class="font-mono-code text-xs sm:text-sm font-semibold text-emerald-400">+0</span>
+            </div>
+            <div class="h-6 w-px bg-slate-700/80"></div>
+            <div class="px-1.5">
+              <span class="text-[10px] uppercase text-rose-400/80 block">Penalty</span>
+              <span id="hud-penalty" class="font-mono-code text-xs sm:text-sm font-semibold text-rose-400">0</span>
+            </div>
+          </div>
+
+          <!-- Desktop Vault Code Slots -->
+          <div class="hidden lg:flex items-center gap-2 bg-slate-900/90 border border-amber-500/30 rounded-xl px-3 py-1.5">
+            <span class="text-[11px] uppercase tracking-wider text-amber-400 font-semibold">Vault Code:</span>
+            <div id="hud-vault-desktop" class="flex items-center gap-1.5 font-mono-code text-sm font-bold">
+              <span class="w-7 h-8 rounded-md flex items-center justify-center vault-slot-locked">?</span>
+              <span class="w-7 h-8 rounded-md flex items-center justify-center vault-slot-locked">?</span>
+              <span class="w-7 h-8 rounded-md flex items-center justify-center vault-slot-locked">?</span>
+              <span class="w-7 h-8 rounded-md flex items-center justify-center vault-slot-locked">?</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-4xl mx-auto px-3 sm:px-6 py-6 sm:py-8">
+
+    <!-- SCREEN 1: WELCOME / MISSION BRIEFING -->
+    <section id="screen-intro" class="brass-card rounded-2xl p-5 sm:p-8 md:p-10">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-amber-500/20 pb-5 mb-6">
+        <div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-400/30 mb-2">
+            <span>&#9881;</span> CLASSIFIED ARCHIVE BRIEFING
+          </span>
+          <h2 class="font-display text-2xl sm:text-3xl font-bold text-white tracking-wide">
+            The Clockwork Archive of Dr. Evelyn Thorne
+          </h2>
+        </div>
+      </div>
+
+      <!-- Story Intro -->
+      <div class="space-y-4 text-slate-300 leading-relaxed text-sm sm:text-base mb-6">
+        <p>
+          Welcome, Junior Archivists! Renowned British linguist and clockmaker <strong class="text-amber-300">Dr. Evelyn Thorne</strong> has mysteriously vanished inside her private Victorian research facility, <em class="text-sky-300">The Clockwork Archive</em>.
+        </p>
+        <p>
+          To protect her latest chronological discoveries, she sealed the main laboratory vault with a <strong class="text-white">4-digit mechanical lock</strong> and distributed the clues across <strong class="text-amber-300">4 thematic security chambers</strong> (18 challenges in total).
+        </p>
+        <div class="rounded-xl bg-sky-950/40 border border-sky-500/30 p-4 text-sky-200 text-sm flex items-start gap-3">
+          <span class="text-lg leading-none mt-0.5">&#127468;&#127463;</span>
+          <div>
+            <strong class="text-sky-300">British English Protocol:</strong> Dr. Thorne's archive only accepts standard <strong>British English</strong> spelling and grammar (e.g., <em>realise</em>, <em>colour</em>, <em>favourite</em>, <em>centre</em>, <em>catalogue</em>).
+          </div>
+        </div>
+      </div>
+
+      <!-- Rules & Scoring Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-7">
+        <div class="rounded-xl bg-slate-900/80 border border-slate-700/70 p-4">
+          <h3 class="font-display text-sm font-bold uppercase tracking-wider text-amber-300 mb-3">
+            &#9878; Scoring System
+          </h3>
+          <ul class="space-y-2 text-xs sm:text-sm text-slate-300">
+            <li class="flex items-center justify-between">
+              <span>Correct answer (18 challenges)</span>
+              <span class="font-mono-code font-bold text-slate-100">+10 pts <span class="text-slate-500">(Max 180)</span></span>
+            </li>
+            <li class="flex items-center justify-between">
+              <span>First-try accuracy bonus</span>
+              <span class="font-mono-code font-bold text-emerald-400">+5 pts</span>
+            </li>
+            <li class="flex items-center justify-between">
+              <span>Wrong attempt (max 2 tries/item)</span>
+              <span class="font-mono-code font-bold text-rose-400">-3 pts</span>
+            </li>
+            <li class="flex items-center justify-between">
+              <span>Requesting a hint</span>
+              <span class="font-mono-code font-bold text-amber-400">-2 pts</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="rounded-xl bg-slate-900/80 border border-slate-700/70 p-4">
+          <h3 class="font-display text-sm font-bold uppercase tracking-wider text-amber-300 mb-3">
+            &#128272; The 4 Archive Chambers
+          </h3>
+          <ul class="space-y-2 text-xs sm:text-sm text-slate-300">
+            <li><strong class="text-amber-200">Topic 1:</strong> Grammar &amp; Tenses <span class="text-slate-400">(Challenges 1–6 &rarr; Digit 1)</span></li>
+            <li><strong class="text-amber-200">Topic 2:</strong> Vocabulary &amp; Word Formation <span class="text-slate-400">(Challenges 7–10 &rarr; Digit 2)</span></li>
+            <li><strong class="text-amber-200">Topic 3:</strong> Reading &amp; Inference <span class="text-slate-400">(Challenges 11–14 &rarr; Digit 3)</span></li>
+            <li><strong class="text-amber-200">Topic 4:</strong> Culture, Media &amp; Communication <span class="text-slate-400">(Challenges 15–18 &rarr; Digit 4)</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Researcher Identification Form -->
+      <form id="start-form" class="rounded-xl bg-slate-950/75 border border-amber-500/30 p-4 sm:p-6 space-y-4">
+        <h3 class="font-display text-base font-bold text-amber-300">
+          Archivist Registration
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="input-student-name" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+              Researcher Name(s) <span class="text-rose-400">*</span>
+            </label>
+            <input
+              id="input-student-name"
+              type="text"
+              required
+              placeholder="e.g. Sofia Martins & Tiago Silva"
+              class="w-full rounded-xl bg-slate-900 border border-slate-700 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/25 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 outline-none transition"
+            />
+          </div>
+          <div>
+            <label for="input-student-class" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+              Class &amp; Number(s) <span class="text-rose-400">*</span>
+            </label>
+            <input
+              id="input-student-class"
+              type="text"
+              required
+              placeholder="e.g. 10.º B — N.º 14, 22"
+              class="w-full rounded-xl bg-slate-900 border border-slate-700 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/25 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 outline-none transition"
+            />
+          </div>
+        </div>
+        <div id="intro-error" class="hidden text-xs text-rose-400 font-medium">
+          Please enter both your name(s) and class/number before entering the archive.
+        </div>
+        <div class="pt-1 flex justify-end">
+          <button type="submit" class="brass-btn w-full sm:w-auto px-7 py-3 rounded-xl text-sm sm:text-base tracking-wide uppercase cursor-pointer">
+            Start Mission &#10140;
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- SCREEN 2: ACTIVE GAMEPLAY (TOPICS & CHALLENGES) -->
+    <section id="screen-game" class="hidden space-y-5">
+
+      <!-- Topic Progress & Challenge Pills -->
+      <div class="brass-card rounded-2xl p-4 sm:p-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+          <div>
+            <span id="topic-badge" class="text-[11px] font-bold uppercase tracking-widest text-amber-400">
+              TOPIC 1 OF 4
+            </span>
+            <h2 id="topic-title" class="font-display text-base sm:text-lg font-bold text-white">
+              Grammar &amp; Tenses — The Time-Travel Logbook
+            </h2>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="progress-counter" class="text-xs font-mono-code text-slate-300 bg-slate-900 px-3 py-1 rounded-lg border border-slate-700">
+              Solved: 0 / 18
+            </span>
+            <button
+              id="btn-jump-vault"
+              type="button"
+              onclick="openVaultScreen()"
+              class="px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 transition cursor-pointer"
+            >
+              &#128274; Open Vault
+            </button>
+          </div>
+        </div>
+
+        <!-- Topic Tabs -->
+        <div id="topic-tabs" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3"></div>
+
+        <!-- Challenge Step Pills -->
+        <div id="challenge-pills" class="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-800"></div>
+      </div>
+
+      <!-- Reading Passage Box (Shown only during Topic 3) -->
+      <div id="reading-passage-box" class="hidden rounded-2xl bg-amber-950/25 border border-amber-500/35 p-5 sm:p-6 shadow-inner">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold uppercase tracking-widest text-amber-400 flex items-center gap-1.5">
+            &#128220; Recovered Journal Excerpt — Dr. Evelyn Thorne
+          </span>
+          <span class="text-[11px] font-mono-code text-amber-300/70">ENTRY #042</span>
+        </div>
+        <blockquote class="font-journal text-lg sm:text-xl italic text-amber-100/95 leading-relaxed border-l-2 border-amber-400/60 pl-4 py-1">
+          “08:15 — The pendulum is running three minutes slow again. I suspect the damp air near the river is affecting the brass gears. I won’t touch the main lock until I test the spare key in the north drawer, just in case the mechanism jams.”
+        </blockquote>
+      </div>
+
+      <!-- Active Challenge Card -->
+      <div id="challenge-card" class="brass-card rounded-2xl p-5 sm:p-7">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <div class="flex items-center gap-2">
+            <span id="challenge-number-badge" class="px-3 py-1 rounded-lg bg-amber-500/20 border border-amber-400/40 font-mono-code text-xs font-bold text-amber-300">
+              CHALLENGE 1 / 18
+            </span>
+            <span id="challenge-skill-badge" class="px-3 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-medium text-sky-300">
+              Past Simple vs. Past Continuous
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="checkpoint-tag" class="hidden px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 text-xs font-bold">
+              &#128273; VAULT DIGIT CHECKPOINT
+            </span>
+            <span id="attempts-badge" class="text-xs font-mono-code text-slate-400 bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-800">
+              Attempts: 0 / 2
+            </span>
+          </div>
+        </div>
+
+        <!-- Question Prompt -->
+        <div id="challenge-prompt" class="text-base sm:text-lg text-slate-100 leading-relaxed mb-6"></div>
+
+        <!-- Dynamic Answer Input Area -->
+        <div id="challenge-input-area" class="mb-5"></div>
+
+        <!-- Hint Box -->
+        <div id="hint-box" class="hidden mb-5 rounded-xl bg-amber-500/10 border border-amber-400/35 p-3.5 text-xs sm:text-sm text-amber-200">
+          <strong class="text-amber-300">&#128161; Archive Clue:</strong> <span id="hint-text"></span>
+        </div>
+
+        <!-- Feedback Banner -->
+        <div id="feedback-box" class="hidden mb-5 rounded-xl p-4 text-sm leading-relaxed"></div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t border-slate-800">
+          <div class="flex items-center gap-2">
+            <button
+              id="btn-hint"
+              type="button"
+              onclick="requestHint()"
+              class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              &#128161; Request Hint (-2 pts)
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2.5">
+            <button
+              id="btn-submit"
+              type="button"
+              onclick="submitAnswer()"
+              class="brass-btn flex-1 sm:flex-initial px-6 py-2.5 rounded-xl text-sm uppercase tracking-wider cursor-pointer"
+            >
+              Submit Answer
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Navigation Bar -->
+      <div class="flex items-center justify-between gap-3">
+        <button
+          id="btn-prev"
+          type="button"
+          onclick="navigateChallenge(-1)"
+          class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          &larr; Previous
+        </button>
+
+        <button
+          id="btn-next"
+          type="button"
+          onclick="navigateChallenge(1)"
+          class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 transition cursor-pointer"
+        >
+          Next Challenge &rarr;
+        </button>
+      </div>
+    </section>
+
+    <!-- SCREEN 3: LABORATORY VAULT KEYPAD -->
+    <section id="screen-vault" class="hidden brass-card rounded-2xl p-5 sm:p-8 text-center">
+      <div class="max-w-md mx-auto">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-300 border border-amber-400/30 mb-3">
+          &#128274; FINAL SECURITY MECHANISM
+        </span>
+        <h2 class="font-display text-2xl sm:text-3xl font-bold text-white mb-2">
+          The Main Archive Vault
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-400 mb-6">
+          Enter the 4-digit security code collected from the checkpoint challenges of Topics 1 to 4.
+        </p>
+
+        <!-- Unlocked Clues Reminder -->
+        <div class="grid grid-cols-4 gap-2 mb-5">
+          <div class="rounded-xl bg-slate-900/90 border border-slate-700 p-2">
+            <span class="block text-[10px] uppercase text-slate-400">Digit 1</span>
+            <span id="vault-clue-0" class="font-mono-code text-base font-bold text-amber-300">?</span>
+          </div>
+          <div class="rounded-xl bg-slate-900/90 border border-slate-700 p-2">
+            <span class="block text-[10px] uppercase text-slate-400">Digit 2</span>
+            <span id="vault-clue-1" class="font-mono-code text-base font-bold text-amber-300">?</span>
+          </div>
+          <div class="rounded-xl bg-slate-900/90 border border-slate-700 p-2">
+            <span class="block text-[10px] uppercase text-slate-400">Digit 3</span>
+            <span id="vault-clue-2" class="font-mono-code text-base font-bold text-amber-300">?</span>
+          </div>
+          <div class="rounded-xl bg-slate-900/90 border border-slate-700 p-2">
+            <span class="block text-[10px] uppercase text-slate-400">Digit 4</span>
+            <span id="vault-clue-3" class="font-mono-code text-base font-bold text-amber-300">?</span>
+          </div>
+        </div>
+
+        <!-- Keypad Digital Display -->
+        <div id="keypad-display-wrap" class="rounded-2xl bg-slate-950 border-2 border-amber-500/40 p-4 mb-5 shadow-inner">
+          <div id="keypad-display" class="flex justify-center gap-3 font-mono-code text-2xl sm:text-3xl font-bold">
+            <span class="w-12 h-14 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center text-amber-300">_</span>
+            <span class="w-12 h-14 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center text-amber-300">_</span>
+            <span class="w-12 h-14 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center text-amber-300">_</span>
+            <span class="w-12 h-14 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center text-amber-300">_</span>
+          </div>
+          <p id="keypad-status" class="text-xs text-slate-400 mt-2.5 min-h-[1rem]">
+            Awaiting 4-digit sequence...
+          </p>
+        </div>
+
+        <!-- Numeric Keypad Buttons -->
+        <div class="grid grid-cols-3 gap-2.5 max-w-xs mx-auto mb-6 font-mono-code">
+          <button type="button" onclick="pressDigit('1')" class="h-14 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-600 text-xl font-bold text-white transition cursor-pointer">1</button>
+          <button type="button" onclick="pressDigit('2')" class="h-14 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-600 text-xl font-bold text-white transition cursor-pointer">2</button>
+          <button type="button" onclick="pressDigit('3')" class="h-14 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-600 text-xl font-bold text-white transition cursor-pointer">3</button>
+          <button type="button" onclick="pressDigit('4')" class="h-14 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-600 text-xl font-bold text-white transition cursor-pointer">4</button>
+          <button type="button" onclick="pressDigit('5')" class="h-14 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-600 text-xl font-bold text-white transition cursor-pointer">5</button>
+          <button type="button" onclick="pressDigit('6')" class="h-14 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-600 text-xl font-bold text-white transition cursor-pointer">6</button>
+          <button type="button" onclick="pressDigit('7')" class="h-14 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-600 text-xl font-bold text-white transition cursor-pointer">7</button>
+          <button type="button" onclick="pressDigit('8')" class="h-14 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-600 text-xl font-bold text-white transition cursor-pointer">8</button>
+          <button type="button" onclick="pressDigit('9')" class="h-14 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-600 text-xl font-bold text-white transition cursor-pointer">9</button>
+          <button type="button" onclick="clearKeypad()" class="h-14 rounded-xl bg-rose-950/70 hover:bg-rose-900/70 active:scale-95 border border-rose-500/40 text-base font-bold text-rose-300 transition cursor-pointer">C</button>
+          <button type="button" onclick="pressDigit('0')" class="h-14 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-600 text-xl font-bold text-white transition cursor-pointer">0</button>
+          <button type="button" onclick="checkVaultCode()" class="h-14 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 border border-emerald-400 text-base font-bold text-slate-950 transition cursor-pointer">OK</button>
+        </div>
+
+        <button
+          type="button"
+          onclick="returnToChallenges()"
+          class="text-xs sm:text-sm text-slate-400 hover:text-amber-300 underline underline-offset-4 cursor-pointer"
+        >
+          &larr; Return to Archive Challenges
+        </button>
+      </div>
+    </section>
+
+    <!-- SCREEN 4: MISSION ACCOMPLISHED SUMMARY -->
+    <section id="screen-complete" class="hidden brass-card rounded-2xl p-5 sm:p-8 md:p-10">
+      <div class="text-center border-b border-amber-500/25 pb-6 mb-6">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-500/15 border border-emerald-400/50 text-3xl mb-3 shadow-lg shadow-emerald-500/15">
+          &#127942;
+        </div>
+        <span class="block text-xs font-bold uppercase tracking-widest text-emerald-400 mb-1">
+          VAULT UNLOCKED &bull; CODE 4785 VERIFIED
+        </span>
+        <h2 class="font-display text-2xl sm:text-4xl font-bold text-amber-300">
+          Mission Accomplished!
+        </h2>
+        <p class="text-sm text-slate-300 max-w-xl mx-auto mt-2">
+          Congratulations, Archivists! You have unlocked Dr. Evelyn Thorne’s master chronometer and secured her research notes.
+        </p>
+      </div>
+
+      <!-- Summary Report Table -->
+      <div class="overflow-hidden rounded-xl border border-slate-700/80 bg-slate-900/85 mb-6">
+        <table class="w-full text-left text-xs sm:text-sm">
+          <tbody class="divide-y divide-slate-800">
+            <tr>
+              <th class="px-4 py-3 font-semibold text-slate-400 w-2/5">Researcher Name(s)</th>
+              <td id="summary-name" class="px-4 py-3 font-semibold text-white">—</td>
+            </tr>
+            <tr>
+              <th class="px-4 py-3 font-semibold text-slate-400">Class &amp; Number</th>
+              <td id="summary-class" class="px-4 py-3 font-semibold text-white">—</td>
+            </tr>
+            <tr>
+              <th class="px-4 py-3 font-semibold text-slate-400">Date &amp; Time</th>
+              <td id="summary-date" class="px-4 py-3 font-mono-code text-slate-300">—</td>
+            </tr>
+            <tr>
+              <th class="px-4 py-3 font-semibold text-slate-400">Challenges Completed</th>
+              <td id="summary-completed" class="px-4 py-3 font-mono-code text-sky-300">18 / 18</td>
+            </tr>
+            <tr>
+              <th class="px-4 py-3 font-semibold text-slate-400">Vault Code Unlocked</th>
+              <td class="px-4 py-3 font-mono-code font-bold text-emerald-400">4785</td>
+            </tr>
+            <tr>
+              <th class="px-4 py-3 font-semibold text-slate-400">Base Score (Max 180)</th>
+              <td id="summary-base" class="px-4 py-3 font-mono-code text-slate-200">0 pts</td>
+            </tr>
+            <tr>
+              <th class="px-4 py-3 font-semibold text-slate-400">First-Try Bonuses</th>
+              <td id="summary-bonus" class="px-4 py-3 font-mono-code text-emerald-400">+0 pts</td>
+            </tr>
+            <tr>
+              <th class="px-4 py-3 font-semibold text-slate-400">Penalties (Wrong / Hints)</th>
+              <td id="summary-penalty" class="px-4 py-3 font-mono-code text-rose-400">0 pts</td>
+            </tr>
+            <tr class="bg-amber-500/10">
+              <th class="px-4 py-3.5 font-display text-sm sm:text-base font-bold text-amber-300">FINAL TOTAL SCORE</th>
+              <td id="summary-total" class="px-4 py-3.5 font-mono-code text-lg sm:text-xl font-bold text-amber-300">0 pts</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Copy Results CTA -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <button
+          type="button"
+          onclick="copyResultsForTeacher()"
+          class="brass-btn w-full sm:w-auto px-6 py-3 rounded-xl text-sm uppercase tracking-wider cursor-pointer"
+        >
+          &#128203; Copy Results for Teacher
+        </button>
+      </div>
+
+      <div id="copy-toast" class="hidden mt-4 text-center">
+        <span class="inline-block px-4 py-2 rounded-xl bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 text-xs sm:text-sm font-semibold">
+          &#10003; Results copied to clipboard! Paste them into your teacher's form or message.
+        </span>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="max-w-4xl mx-auto px-4 py-6 text-center text-xs text-slate-500">
+    The Clockwork Archive &bull; Interactive 10th Grade ESL Escape Room (CEFR A2–B1 &bull; British English)
+  </footer>
+
+  <script>
+    // =========================================================================
+    // 1. CURRICULUM & CHALLENGE DATA (4 TOPICS, 18 CHALLENGES, VAULT CODE 4785)
+    // =========================================================================
+    const TOPICS = [
+      { id: 0, short: "Topic 1: Grammar", title: "Topic 1: Grammar & Tenses — The Time-Travel Logbook", digitIndex: 0 },
+      { id: 1, short: "Topic 2: Vocabulary", title: "Topic 2: Vocabulary & Word Formation — The Cabinet of Curiosities", digitIndex: 1 },
+      { id: 2, short: "Topic 3: Reading", title: "Topic 3: Reading & Inference — The Missing Researcher's Notes", digitIndex: 2 },
+      { id: 3, short: "Topic 4: Culture & Media", title: "Topic 4: Culture, Media & Everyday Communication — The Field Dispatch", digitIndex: 3 }
+    ];
+
+    const CHALLENGES = [
+      // ---------------- TOPIC 1: GRAMMAR & TENSES (1-6) ----------------
+      {
+        id: 1,
+        topic: 0,
+        skill: "Past Simple vs. Past Continuous",
+        type: "dual-input",
+        promptParts: [
+          "Dr. Thorne ",
+          " (write) a note in her diary when the archive lights ",
+          " (break)."
+        ],
+        placeholders: ["Past Continuous...", "Past Simple (irregular)..."],
+        accepted: [["was writing"], ["broke"]],
+        displayAnswer: "was writing / broke",
+        hint: "Use the Past Continuous (was + -ing) for the longer background action, and the irregular Past Simple form of 'break' for the sudden interruption.",
+        explanation: "'was writing' describes the action in progress when the lights suddenly 'broke' (irregular past of break)."
+      },
+      {
+        id: 2,
+        topic: 0,
+        skill: "Present Perfect vs. Past Simple",
+        type: "dual-input",
+        promptParts: [
+          "She ",
+          " (already / catalogue) twelve rare manuscripts since Monday, although she ",
+          " (find) the first one last month."
+        ],
+        placeholders: ["Present Perfect...", "Past Simple (irregular)..."],
+        accepted: [["has already catalogued"], ["found"]],
+        displayAnswer: "has already catalogued / found",
+        hint: "Use 'has + already + past participle' with 'since Monday', and the irregular Past Simple of 'find' with the finished time phrase 'last month'.",
+        explanation: "'since Monday' requires the Present Perfect ('has already catalogued'), whereas 'last month' requires the Past Simple ('found')."
+      },
+      {
+        id: 3,
+        topic: 0,
+        skill: "Past Perfect (Irregular Verbs)",
+        type: "dual-input",
+        promptParts: [
+          "By the time the assistant arrived, Dr. Thorne ",
+          " (hide) the central key and ",
+          " (leave) the building."
+        ],
+        placeholders: ["had + past participle...", "Past Simple / Participle..."],
+        accepted: [["had hidden"], ["left", "had left"]],
+        displayAnswer: "had hidden / left (or had left)",
+        hint: "Both verbs are irregular: hide -> hid -> hidden; leave -> left -> left. Use 'had + past participle' for actions completed before another past event.",
+        explanation: "The Past Perfect 'had hidden' and 'left' (or 'had left') show actions completed before the assistant arrived."
+      },
+      {
+        id: 4,
+        topic: 0,
+        skill: "Present Perfect Continuous (Duration)",
+        type: "single-input",
+        promptParts: [
+          "The archive alarm ",
+          " (ring) for twenty minutes, and nobody has turned it off yet."
+        ],
+        placeholders: ["Present Perfect Continuous..."],
+        accepted: [["has been ringing"]],
+        displayAnswer: "has been ringing",
+        hint: "Form the Present Perfect Continuous with 'has/have + been + verb-ing' to emphasise an action that started in the past and is still continuing.",
+        explanation: "'has been ringing' highlights the continuous duration ('for twenty minutes') up to the present moment."
+      },
+      {
+        id: 5,
+        topic: 0,
+        skill: "Present Perfect Continuous (Visible Result)",
+        type: "single-input",
+        promptParts: [
+          "Why are Dr. Thorne's hands covered in ink? Because she ",
+          " (translate) the ancient cipher all morning."
+        ],
+        placeholders: ["Present Perfect Continuous..."],
+        accepted: [["has been translating"]],
+        displayAnswer: "has been translating",
+        hint: "Use 'has been + -ing' to explain a visible present result caused by a recent continuous activity.",
+        explanation: "'has been translating' connects her ongoing morning activity directly to the visible evidence (ink on her hands)."
+      },
+      {
+        id: 6,
+        topic: 0,
+        skill: "Third Conditional",
+        type: "mcq",
+        checkpointDigitIndex: 0,
+        checkpointDigitValue: "4",
+        promptText: "If she ________ more time yesterday, she would have checked the final page.",
+        options: [
+          { label: "A) had had", value: "had had", digitNote: "Unlocks Digit 1 = 4" },
+          { label: "B) would have", value: "would have", digitNote: "Digit 1 = 6" },
+          { label: "C) has had", value: "has had", digitNote: "Digit 1 = 9" }
+        ],
+        correctOption: "had had",
+        displayAnswer: "A) had had",
+        hint: "In the Third Conditional (unreal past), the 'if' clause requires the Past Perfect: 'had + past participle' (had + had).",
+        explanation: "Third Conditional structure: If + Past Perfect ('had had'), would have + past participle ('would have checked'). Vault Digit 1 is 4!"
+      },
+
+      // ---------------- TOPIC 2: VOCABULARY & WORD FORMATION (7-10) ----------------
+      {
+        id: 7,
+        topic: 1,
+        skill: "British English Spelling",
+        type: "dual-input",
+        promptParts: [
+          "The ",
+          " (centre / center) of the room contains a brass compass with a ",
+          " (colour / color)-coded dial."
+        ],
+        placeholders: ["British spelling...", "British spelling..."],
+        accepted: [["centre"], ["colour"]],
+        displayAnswer: "centre / colour",
+        hint: "Remember Dr. Thorne's British English rule: words ending in '-re' (centre) and '-our' (colour).",
+        explanation: "In British English, 'centre' ends in -re and 'colour' includes the letter 'u'."
+      },
+      {
+        id: 8,
+        topic: 1,
+        skill: "Word Formation (Negative Prefix)",
+        type: "single-input",
+        promptParts: [
+          "Form the correct negative adjective from RELY: It would be ",
+          " to guess the code without checking the evidence."
+        ],
+        placeholders: ["Negative adjective from RELY..."],
+        accepted: [["unreliable"]],
+        displayAnswer: "unreliable",
+        hint: "First form the adjective from 'rely' (reliable), then add the negative prefix 'un-'.",
+        explanation: "Adding the prefix 'un-' and suffix '-able' to 'rely' forms 'unreliable' (not trustworthy or dependable)."
+      },
+      {
+        id: 9,
+        topic: 1,
+        skill: "Phrasal Verbs in Context",
+        type: "dual-input",
+        promptParts: [
+          "Please ",
+          " (look) the word ",
+          " in the old dictionary before moving to the next shelf."
+        ],
+        placeholders: ["Verb...", "Particle..."],
+        accepted: [["look"], ["up"]],
+        displayAnswer: "look ... up",
+        hint: "Which two-word phrasal verb means 'to search for information in a dictionary or reference book'?",
+        explanation: "'To look something up' means to search for a word or piece of information in a reference source."
+      },
+      {
+        id: 10,
+        topic: 1,
+        skill: "British Vocabulary & Definitions",
+        type: "mcq",
+        checkpointDigitIndex: 1,
+        checkpointDigitValue: "7",
+        promptText: "Which word means 'a device or piece of equipment designed to perform a specific task'?",
+        options: [
+          { label: "A) Appliance", value: "Appliance", digitNote: "Unlocks Digit 2 = 7" },
+          { label: "B) Programme", value: "Programme", digitNote: "Digit 2 = 2" },
+          { label: "C) Catalogue", value: "Catalogue", digitNote: "Digit 2 = 5" }
+        ],
+        correctOption: "Appliance",
+        displayAnswer: "A) Appliance",
+        hint: "Think of household or laboratory devices built for a particular function (e.g., an electrical appliance).",
+        explanation: "An 'appliance' is a device or instrument designed for a specific task. Vault Digit 2 is 7!"
+      },
+
+      // ---------------- TOPIC 3: READING & INFERENCE (11-14) ----------------
+      {
+        id: 11,
+        topic: 2,
+        skill: "Reading — Literal Comprehension",
+        type: "single-input",
+        promptParts: [
+          "According to Dr. Thorne's journal entry above, how many minutes slow is the pendulum running? ",
+          ""
+        ],
+        placeholders: ["Write digit or word (e.g. 3 or three)..."],
+        accepted: [["3", "three", "three minutes", "3 minutes"]],
+        displayAnswer: "3 (three minutes)",
+        hint: "Check the very first sentence of the recovered journal entry.",
+        explanation: "The entry clearly states: 'The pendulum is running three minutes slow again.'"
+      },
+      {
+        id: 12,
+        topic: 2,
+        skill: "Reading — Cause & Effect",
+        type: "mcq",
+        promptText: "What does Dr. Thorne suspect is causing the problem with the brass gears?",
+        options: [
+          { label: "A) Damp air near the river", value: "Damp air near the river" },
+          { label: "B) A broken pendulum", value: "A broken pendulum" },
+          { label: "C) The spare key", value: "The spare key" }
+        ],
+        correctOption: "Damp air near the river",
+        displayAnswer: "A) Damp air near the river",
+        hint: "Look at the second sentence starting with 'I suspect...'",
+        explanation: "She writes: 'I suspect the damp air near the river is affecting the brass gears.'"
+      },
+      {
+        id: 13,
+        topic: 2,
+        skill: "Reading — Specific Detail",
+        type: "single-input",
+        promptParts: [
+          "Where is the spare key kept? In the ",
+          " drawer."
+        ],
+        placeholders: ["Compass direction..."],
+        accepted: [["north", "the north"]],
+        displayAnswer: "north",
+        hint: "Read the final sentence carefully to find which drawer holds the spare key.",
+        explanation: "She mentions testing 'the spare key in the north drawer'."
+      },
+      {
+        id: 14,
+        topic: 2,
+        skill: "Reading — Inference",
+        type: "mcq",
+        checkpointDigitIndex: 2,
+        checkpointDigitValue: "8",
+        promptText: "Why does Dr. Thorne hesitate to use the main lock immediately?",
+        options: [
+          { label: "A) Because the mechanism might jam", value: "Because the mechanism might jam", digitNote: "Unlocks Digit 3 = 8" },
+          { label: "B) Because she lost the key", value: "Because she lost the key", digitNote: "Digit 3 = 3" },
+          { label: "C) Because it is midnight", value: "Because it is midnight", digitNote: "Digit 3 = 1" }
+        ],
+        correctOption: "Because the mechanism might jam",
+        displayAnswer: "A) Because the mechanism might jam",
+        hint: "Look at the reason given at the very end of the excerpt ('...just in case...').",
+        explanation: "She wants to test the spare key first 'just in case the mechanism jams'. Vault Digit 3 is 8!"
+      },
+
+      // ---------------- TOPIC 4: CULTURE, MEDIA & COMMUNICATION (15-18) ----------------
+      {
+        id: 15,
+        topic: 3,
+        skill: "Functional English — Making Suggestions",
+        type: "single-input",
+        promptParts: [
+          "Complete the polite suggestion: Why ",
+          " we check the security cameras first? It might save us time."
+        ],
+        placeholders: ["Missing word..."],
+        accepted: [["don't", "do not", "dont"]],
+        displayAnswer: "don't",
+        hint: "A common English structure for making a suggestion is 'Why + negative auxiliary + we + infinitive?'",
+        explanation: "'Why don't we...?' is a standard, natural way to make a polite suggestion in English."
+      },
+      {
+        id: 16,
+        topic: 3,
+        skill: "Media & Communication Vocabulary",
+        type: "single-input",
+        promptParts: [
+          "What 8-letter word describes a live or recorded report sent from a location where an event is taking place? (Starts with D: D _ _ _ _ _ _ _) ",
+          ""
+        ],
+        placeholders: ["8-letter word starting with D..."],
+        accepted: [["dispatch", "despatch"]],
+        displayAnswer: "dispatch",
+        hint: "Look at the title of Topic 4 ('The Field ________') — it starts with D and ends with -patch.",
+        explanation: "A 'dispatch' is an official report or news item sent from a specific location."
+      },
+      {
+        id: 17,
+        topic: 3,
+        skill: "Everyday Idioms",
+        type: "mcq",
+        promptText: "What does the everyday English idiom 'to hit the nail on the head' mean?",
+        options: [
+          { label: "A) To describe exactly what is causing a situation or problem", value: "A" },
+          { label: "B) To accidentally break a delicate instrument", value: "B" },
+          { label: "C) To work late at night without resting", value: "C" }
+        ],
+        correctOption: "A",
+        displayAnswer: "A) To describe exactly what is causing a situation or problem",
+        hint: "When someone gets a diagnosis or explanation 100% right, we say they hit the nail on the head.",
+        explanation: "'To hit the nail on the head' means to identify the exact truth or cause of a problem."
+      },
+      {
+        id: 18,
+        topic: 3,
+        skill: "British Culture & Media",
+        type: "mcq",
+        checkpointDigitIndex: 3,
+        checkpointDigitValue: "5",
+        promptText: "In British public media, what does the famous abbreviation BBC stand for?",
+        options: [
+          { label: "A) British Broadcasting Corporation", value: "British Broadcasting Corporation", digitNote: "Unlocks Digit 4 = 5" },
+          { label: "B) Britannia Broadcast Company", value: "Britannia Broadcast Company", digitNote: "Digit 4 = 9" },
+          { label: "C) British Bureau of Communication", value: "British Bureau of Communication", digitNote: "Digit 4 = 2" }
+        ],
+        correctOption: "British Broadcasting Corporation",
+        displayAnswer: "A) British Broadcasting Corporation",
+        hint: "Founded in 1922, it is the UK's national public service broadcaster.",
+        explanation: "BBC stands for the British Broadcasting Corporation. Vault Digit 4 is 5!"
+      }
+    ];
+
+    const SECRET_VAULT_CODE = "4785";
+
+    // =========================================================================
+    // 2. APPLICATION STATE
+    // =========================================================================
+    const state = {
+      studentName: "",
+      studentClass: "",
+      currentIndex: 0,
+      baseScore: 0,
+      bonusScore: 0,
+      penaltyScore: 0,
+      vaultDigits: [null, null, null, null],
+      keypadBuffer: "",
+      vaultUnlocked: false,
+      challengeStates: CHALLENGES.map(() => ({
+        attempts: 0,
+        solved: false,
+        failedOut: false,
+        hintUsed: false,
+        selectedOption: null,
+        userInputs: ["", ""]
+      }))
+    };
+
+    // =========================================================================
+    // 3. INITIALISATION & SCREEN TRANSITIONS
+    // =========================================================================
+    document.getElementById("start-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const nameVal = document.getElementById("input-student-name").value.trim();
+      const classVal = document.getElementById("input-student-class").value.trim();
+      const errEl = document.getElementById("intro-error");
+
+      if (!nameVal || !classVal) {
+        errEl.classList.remove("hidden");
+        return;
+      }
+
+      errEl.classList.add("hidden");
+      state.studentName = nameVal;
+      state.studentClass = classVal;
+
+      document.getElementById("screen-intro").classList.add("hidden");
+      document.getElementById("screen-game").classList.remove("hidden");
+      renderChallenge();
+      updateHUD();
+    });
+
+    function openVaultScreen() {
+      document.getElementById("screen-game").classList.add("hidden");
+      document.getElementById("screen-vault").classList.remove("hidden");
+      updateVaultClueCards();
+      renderKeypadDisplay();
+    }
+
+    function returnToChallenges() {
+      document.getElementById("screen-vault").classList.add("hidden");
+      document.getElementById("screen-game").classList.remove("hidden");
+      renderChallenge();
+    }
+
+    // =========================================================================
+    // 4. HUD & NAVIGATION RENDERING
+    // =========================================================================
+    function updateHUD() {
+      const total = state.baseScore + state.bonusScore - state.penaltyScore;
+      document.getElementById("hud-total").textContent = total;
+      document.getElementById("hud-base").innerHTML = `${state.baseScore}<span class="text-slate-500">/180</span>`;
+      document.getElementById("hud-bonus").textContent = `+${state.bonusScore}`;
+      document.getElementById("hud-penalty").textContent = state.penaltyScore > 0 ? `-${state.penaltyScore}` : "0";
+
+      const completedCount = state.challengeStates.filter(s => s.solved || s.failedOut).length;
+      const progressCounter = document.getElementById("progress-counter");
+      if (progressCounter) {
+        progressCounter.textContent = `Completed: ${completedCount} / ${CHALLENGES.length}`;
+      }
+
+      // Render Vault Slots in both Desktop & Mobile HUD
+      ["hud-vault-desktop", "hud-vault-mobile"].forEach((containerId, idx) => {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        const isMobile = idx === 1;
+        const sizeClass = isMobile ? "w-6 h-7 rounded" : "w-7 h-8 rounded-md";
+        container.innerHTML = state.vaultDigits.map(digit => {
+          if (digit !== null) {
+            return `<span class="${sizeClass} flex items-center justify-center vault-slot-unlocked">${digit}</span>`;
+          }
+          return `<span class="${sizeClass} flex items-center justify-center vault-slot-locked">?</span>`;
+        }).join("");
+      });
+    }
+
+    function renderNavigation() {
+      const currentChallenge = CHALLENGES[state.currentIndex];
+      const currentTopic = TOPICS[currentChallenge.topic];
+
+      document.getElementById("topic-badge").textContent = `TOPIC ${currentTopic.id + 1} OF 4`;
+      document.getElementById("topic-title").textContent = currentTopic.title;
+
+      // Topic Tabs
+      const topicTabsEl = document.getElementById("topic-tabs");
+      topicTabsEl.innerHTML = TOPICS.map(t => {
+        const isActive = t.id === currentChallenge.topic;
+        const digitUnlocked = state.vaultDigits[t.digitIndex] !== null;
+        return `
+          <button
+            type="button"
+            onclick="jumpToTopic(${t.id})"
+            class="px-3 py-2 rounded-xl text-left text-xs font-semibold border transition cursor-pointer flex items-center justify-between ${
+              isActive
+                ? "bg-amber-500/20 border-amber-400 text-amber-200 shadow-sm"
+                : "bg-slate-900/80 border-slate-800 text-slate-400 hover:border-slate-600 hover:text-slate-200"
+            }"
+          >
+            <span class="truncate">${t.short}</span>
+            <span class="ml-1.5 font-mono-code text-[11px] ${digitUnlocked ? "text-emerald-400" : "text-slate-600"}">
+              ${digitUnlocked ? `[${state.vaultDigits[t.digitIndex]}]` : "[?]"}
+            </span>
+          </button>
+        `;
+      }).join("");
+
+      // Challenge Pills
+      const pillsEl = document.getElementById("challenge-pills");
+      pillsEl.innerHTML = CHALLENGES.map((ch, idx) => {
+        const st = state.challengeStates[idx];
+        const isCurrent = idx === state.currentIndex;
+        let style = "bg-slate-900 border-slate-700 text-slate-400 hover:border-slate-500";
+        if (st.solved) {
+          style = "bg-emerald-500/20 border-emerald-500/60 text-emerald-300";
+        } else if (st.failedOut) {
+          style = "bg-rose-500/20 border-rose-500/60 text-rose-300";
+        }
+        if (isCurrent) {
+          style += " ring-2 ring-amber-400 font-bold text-white";
+        }
+        const isCheckpoint = typeof ch.checkpointDigitIndex === "number";
+        return `
+          <button
+            type="button"
+            onclick="jumpToChallenge(${idx})"
+            title="Challenge ${ch.id}${isCheckpoint ? " (Vault Digit Checkpoint)" : ""}"
+            class="w-8 h-8 rounded-lg border font-mono-code text-xs flex items-center justify-center transition cursor-pointer ${style}"
+          >
+            ${ch.id}
+          </button>
+        `;
+      }).join("");
+
+      // Show Reading Excerpt only on Topic 3
+      const readingBox = document.getElementById("reading-passage-box");
+      if (currentChallenge.topic === 2) {
+        readingBox.classList.remove("hidden");
+      } else {
+        readingBox.classList.add("hidden");
+      }
+
+      // Prev / Next buttons
+      document.getElementById("btn-prev").disabled = state.currentIndex === 0;
+      const nextBtn = document.getElementById("btn-next");
+      if (state.currentIndex === CHALLENGES.length - 1) {
+        nextBtn.innerHTML = "Proceed to Vault &#128274;";
+        nextBtn.onclick = openVaultScreen;
+      } else {
+        nextBtn.innerHTML = "Next Challenge &rarr;";
+        nextBtn.onclick = () => navigateChallenge(1);
+      }
+    }
+
+    function jumpToTopic(topicId) {
+      const firstIdx = CHALLENGES.findIndex(c => c.topic === topicId);
+      if (firstIdx !== -1) {
+        state.currentIndex = firstIdx;
+        renderChallenge();
+      }
+    }
+
+    function jumpToChallenge(idx) {
+      state.currentIndex = idx;
+      renderChallenge();
+    }
+
+    function navigateChallenge(delta) {
+      const target = state.currentIndex + delta;
+      if (target >= 0 && target < CHALLENGES.length) {
+        state.currentIndex = target;
+        renderChallenge();
+      }
+    }
+
+    // =========================================================================
+    // 5. CHALLENGE RENDERING & ANSWER EVALUATION
+    // =========================================================================
+    function renderChallenge() {
+      renderNavigation();
+
+      const ch = CHALLENGES[state.currentIndex];
+      const st = state.challengeStates[state.currentIndex];
+      const isLocked = st.solved || st.failedOut;
+
+      document.getElementById("challenge-number-badge").textContent = `CHALLENGE ${ch.id} / ${CHALLENGES.length}`;
+      document.getElementById("challenge-skill-badge").textContent = ch.skill;
+      document.getElementById("attempts-badge").textContent = `Attempts: ${st.attempts} / 2`;
+
+      const cpTag = document.getElementById("checkpoint-tag");
+      if (typeof ch.checkpointDigitIndex === "number") {
+        cpTag.classList.remove("hidden");
+        cpTag.textContent = `🔑 VAULT DIGIT ${ch.checkpointDigitIndex + 1} CHECKPOINT`;
+      } else {
+        cpTag.classList.add("hidden");
+      }
+
+      const promptEl = document.getElementById("challenge-prompt");
+      const inputAreaEl = document.getElementById("challenge-input-area");
+
+      if (ch.type === "single-input") {
+        promptEl.innerHTML = `
+          <p class="leading-relaxed">
+            ${ch.promptParts[0]}<span class="inline-block px-2 py-0.5 mx-1 rounded bg-slate-800 border-b-2 border-amber-400 font-mono-code text-amber-300 text-sm">________</span>${ch.promptParts[1]}
+          </p>
+        `;
+        inputAreaEl.innerHTML = `
+          <label class="block text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2">Your Answer:</label>
+          <input
+            id="ans-input-0"
+            type="text"
+            autocomplete="off"
+            spellcheck="false"
+            value="${escapeHtml(st.userInputs[0] || "")}"
+            ${isLocked ? "disabled" : ""}
+            placeholder="${ch.placeholders[0]}"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();submitAnswer();}"
+            class="w-full sm:max-w-md rounded-xl bg-slate-900 border border-slate-600 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/25 px-4 py-3 font-mono-code text-sm sm:text-base text-white placeholder-slate-500 outline-none disabled:opacity-60"
+          />
+        `;
+      } else if (ch.type === "dual-input") {
+        promptEl.innerHTML = `
+          <p class="leading-relaxed">
+            ${ch.promptParts[0]}<span class="inline-block px-2 py-0.5 mx-1 rounded bg-slate-800 border-b-2 border-amber-400 font-mono-code text-amber-300 text-sm">[1]</span>${ch.promptParts[1]}<span class="inline-block px-2 py-0.5 mx-1 rounded bg-slate-800 border-b-2 border-sky-400 font-mono-code text-sky-300 text-sm">[2]</span>${ch.promptParts[2]}
+          </p>
+        `;
+        inputAreaEl.innerHTML = `
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs uppercase tracking-wider text-amber-300 font-semibold mb-1.5">Blank [1]:</label>
+              <input
+                id="ans-input-0"
+                type="text"
+                autocomplete="off"
+                spellcheck="false"
+                value="${escapeHtml(st.userInputs[0] || "")}"
+                ${isLocked ? "disabled" : ""}
+                placeholder="${ch.placeholders[0]}"
+                onkeydown="if(event.key==='Enter'){event.preventDefault();submitAnswer();}"
+                class="w-full rounded-xl bg-slate-900 border border-slate-600 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/25 px-4 py-3 font-mono-code text-sm text-white placeholder-slate-500 outline-none disabled:opacity-60"
+              />
+            </div>
+            <div>
+              <label class="block text-xs uppercase tracking-wider text-sky-300 font-semibold mb-1.5">Blank [2]:</label>
+              <input
+                id="ans-input-1"
+                type="text"
+                autocomplete="off"
+                spellcheck="false"
+                value="${escapeHtml(st.userInputs[1] || "")}"
+                ${isLocked ? "disabled" : ""}
+                placeholder="${ch.placeholders[1]}"
+                onkeydown="if(event.key==='Enter'){event.preventDefault();submitAnswer();}"
+                class="w-full rounded-xl bg-slate-900 border border-slate-600 focus:border-sky-400 focus:ring-2 focus:ring-sky-400/25 px-4 py-3 font-mono-code text-sm text-white placeholder-slate-500 outline-none disabled:opacity-60"
+              />
+            </div>
+          </div>
+        `;
+      } else if (ch.type === "mcq") {
+        promptEl.innerHTML = `<p class="font-medium">${ch.promptText}</p>`;
+        inputAreaEl.innerHTML = `
+          <div class="space-y-2.5">
+            ${ch.options.map((opt, oIdx) => {
+              const isSelected = st.selectedOption === opt.value;
+              let cardStyle = "bg-slate-900/90 border-slate-700 hover:border-amber-400/60 text-slate-200";
+              if (isSelected) {
+                cardStyle = "bg-amber-500/20 border-amber-400 text-white ring-1 ring-amber-400";
+              }
+              if (isLocked && opt.value === ch.correctOption) {
+                cardStyle = "bg-emerald-500/20 border-emerald-400 text-emerald-200";
+              } else if (isLocked && isSelected && opt.value !== ch.correctOption) {
+                cardStyle = "bg-rose-500/20 border-rose-400 text-rose-200";
+              }
+              return `
+                <button
+                  type="button"
+                  ${isLocked ? "disabled" : ""}
+                  onclick="selectMcqOption('${escapeAttr(opt.value)}')"
+                  class="w-full text-left px-4 py-3.5 rounded-xl border transition flex items-center justify-between gap-3 cursor-pointer disabled:cursor-default ${cardStyle}"
+                >
+                  <span class="text-sm sm:text-base font-medium">${opt.label}</span>
+                  ${opt.digitNote ? `<span class="text-[11px] font-mono-code px-2 py-0.5 rounded bg-slate-950/70 text-amber-300/90 border border-amber-500/25 shrink-0">${opt.digitNote}</span>` : ""}
+                </button>
+              `;
+            }).join("")}
+          </div>
+        `;
+      }
+
+      // Hint Box State
+      const hintBox = document.getElementById("hint-box");
+      const hintBtn = document.getElementById("btn-hint");
+      if (st.hintUsed) {
+        hintBox.classList.remove("hidden");
+        document.getElementById("hint-text").textContent = ch.hint;
+        hintBtn.disabled = true;
+        hintBtn.textContent = "💡 Hint Unlocked (-2 pts)";
+      } else {
+        hintBox.classList.add("hidden");
+        hintBtn.disabled = isLocked;
+        hintBtn.textContent = "💡 Request Hint (-2 pts)";
+      }
+
+      // Submit Button State
+      const submitBtn = document.getElementById("btn-submit");
+      submitBtn.disabled = isLocked;
+
+      // Feedback Box State
+      const feedbackBox = document.getElementById("feedback-box");
+      if (st.solved) {
+        const bonusNote = st.attempts === 1 ? " (+10 base + 5 first-try bonus!)" : " (+10 base points)";
+        const digitNote = typeof ch.checkpointDigitIndex === "number"
+          ? `<div class="mt-2 font-mono-code text-xs font-bold text-emerald-300">&#128275; VAULT DIGIT ${ch.checkpointDigitIndex + 1} UNLOCKED: [ ${ch.checkpointDigitValue} ]</div>`
+          : "";
+        feedbackBox.className = "mb-5 rounded-xl p-4 text-sm leading-relaxed bg-emerald-950/60 border border-emerald-500/50 text-emerald-200";
+        feedbackBox.innerHTML = `<strong>&#10003; Correct!</strong>${bonusNote}<p class="mt-1 text-emerald-100/90">${ch.explanation}</p>${digitNote}`;
+      } else if (st.failedOut) {
+        const digitNote = typeof ch.checkpointDigitIndex === "number"
+          ? `<div class="mt-2 font-mono-code text-xs font-bold text-amber-300">&#128275; EMERGENCY OVERRIDE — VAULT DIGIT ${ch.checkpointDigitIndex + 1} REVEALED: [ ${ch.checkpointDigitValue} ]</div>`
+          : "";
+        feedbackBox.className = "mb-5 rounded-xl p-4 text-sm leading-relaxed bg-rose-950/60 border border-rose-500/50 text-rose-200";
+        feedbackBox.innerHTML = `<strong>&#10007; Maximum attempts reached.</strong> Correct answer: <span class="font-mono-code font-bold text-white">${ch.displayAnswer}</span>.<p class="mt-1 text-rose-100/90">${ch.explanation}</p>${digitNote}`;
+      } else if (st.attempts === 1) {
+        feedbackBox.className = "mb-5 rounded-xl p-4 text-sm leading-relaxed bg-amber-950/60 border border-amber-500/50 text-amber-200";
+        feedbackBox.innerHTML = `<strong>&#9888; Not quite right (-3 pts penalty).</strong> Check your British English spelling and verb tense carefully — you have <strong>1 attempt remaining</strong>!`;
+      } else {
+        feedbackBox.className = "hidden";
+      }
+    }
+
+    function selectMcqOption(val) {
+      const st = state.challengeStates[state.currentIndex];
+      if (st.solved || st.failedOut) return;
+      st.selectedOption = val;
+      renderChallenge();
+    }
+
+    function requestHint() {
+      const st = state.challengeStates[state.currentIndex];
+      if (st.hintUsed || st.solved || st.failedOut) return;
+      st.hintUsed = true;
+      state.penaltyScore += 2;
+      updateHUD();
+      renderChallenge();
+    }
+
+    function normalizeText(str) {
+      return (str || "")
+        .toLowerCase()
+        .trim()
+        .replace(/[\u2018\u2019]/g, "'")
+        .replace(/[.!?]+$/g, "")
+        .replace(/\s+/g, " ");
+    }
+
+    function submitAnswer() {
+      const ch = CHALLENGES[state.currentIndex];
+      const st = state.challengeStates[state.currentIndex];
+      if (st.solved || st.failedOut) return;
+
+      let isCorrect = false;
+
+      if (ch.type === "single-input") {
+        const raw0 = document.getElementById("ans-input-0").value;
+        st.userInputs[0] = raw0;
+        const norm0 = normalizeText(raw0);
+        if (!norm0) {
+          flashEmptyWarning();
+          return;
+        }
+        isCorrect = ch.accepted[0].some(ans => normalizeText(ans) === norm0);
+      } else if (ch.type === "dual-input") {
+        const raw0 = document.getElementById("ans-input-0").value;
+        const raw1 = document.getElementById("ans-input-1").value;
+        st.userInputs = [raw0, raw1];
+        const norm0 = normalizeText(raw0);
+        const norm1 = normalizeText(raw1);
+        if (!norm0 || !norm1) {
+          flashEmptyWarning();
+          return;
+        }
+        const ok0 = ch.accepted[0].some(ans => normalizeText(ans) === norm0);
+        const ok1 = ch.accepted[1].some(ans => normalizeText(ans) === norm1);
+        isCorrect = ok0 && ok1;
+      } else if (ch.type === "mcq") {
+        if (!st.selectedOption) {
+          flashEmptyWarning();
+          return;
+        }
+        isCorrect = st.selectedOption === ch.correctOption;
+      }
+
+      st.attempts += 1;
+
+      if (isCorrect) {
+        st.solved = true;
+        state.baseScore += 10;
+        if (st.attempts === 1) {
+          state.bonusScore += 5;
+        }
+        if (typeof ch.checkpointDigitIndex === "number") {
+          state.vaultDigits[ch.checkpointDigitIndex] = ch.checkpointDigitValue;
+        }
+      } else {
+        state.penaltyScore += 3;
+        if (st.attempts >= 2) {
+          st.failedOut = true;
+          // Reveal checkpoint digit on 2nd fail so students are never permanently soft-locked
+          if (typeof ch.checkpointDigitIndex === "number") {
+            state.vaultDigits[ch.checkpointDigitIndex] = ch.checkpointDigitValue;
+          }
+        }
+      }
+
+      updateHUD();
+      renderChallenge();
+    }
+
+    function flashEmptyWarning() {
+      const feedbackBox = document.getElementById("feedback-box");
+      feedbackBox.className = "mb-5 rounded-xl p-3.5 text-xs sm:text-sm bg-slate-800 border border-amber-400/50 text-amber-300";
+      feedbackBox.textContent = "Please enter or select an answer before submitting.";
+    }
+
+    // =========================================================================
+    // 6. VAULT KEYPAD LOGIC
+    // =========================================================================
+    function updateVaultClueCards() {
+      state.vaultDigits.forEach((d, idx) => {
+        const el = document.getElementById(`vault-clue-${idx}`);
+        if (el) {
+          el.textContent = d !== null ? d : "?";
+          el.className = d !== null
+            ? "font-mono-code text-base font-bold text-emerald-400"
+            : "font-mono-code text-base font-bold text-slate-500";
+        }
+      });
+    }
+
+    function renderKeypadDisplay() {
+      const displayEl = document.getElementById("keypad-display");
+      const chars = state.keypadBuffer.split("");
+      let html = "";
+      for (let i = 0; i < 4; i++) {
+        const c = chars[i] || "_";
+        html += `<span class="w-12 h-14 rounded-xl bg-slate-900 border ${chars[i] ? "border-amber-400 text-amber-300" : "border-slate-700 text-slate-600"} flex items-center justify-center">${c}</span>`;
+      }
+      displayEl.innerHTML = html;
+    }
+
+    function pressDigit(d) {
+      if (state.keypadBuffer.length >= 4) return;
+      state.keypadBuffer += d;
+      renderKeypadDisplay();
+      document.getElementById("keypad-status").textContent = "Entering sequence...";
+      document.getElementById("keypad-status").className = "text-xs text-slate-400 mt-2.5 min-h-[1rem]";
+    }
+
+    function clearKeypad() {
+      state.keypadBuffer = "";
+      renderKeypadDisplay();
+      document.getElementById("keypad-status").textContent = "Sequence cleared.";
+      document.getElementById("keypad-status").className = "text-xs text-slate-400 mt-2.5 min-h-[1rem]";
+    }
+
+    function checkVaultCode() {
+      const statusEl = document.getElementById("keypad-status");
+      const wrapEl = document.getElementById("keypad-display-wrap");
+
+      if (state.keypadBuffer.length < 4) {
+        statusEl.textContent = "Please enter all 4 digits.";
+        statusEl.className = "text-xs text-amber-400 mt-2.5 min-h-[1rem]";
+        return;
+      }
+
+      if (state.keypadBuffer === SECRET_VAULT_CODE) {
+        state.vaultUnlocked = true;
+        // Ensure all 4 HUD slots display the unlocked code
+        state.vaultDigits = ["4", "7", "8", "5"];
+        updateHUD();
+        showCompletionScreen();
+      } else {
+        wrapEl.classList.remove("shake-anim");
+        void wrapEl.offsetWidth; // trigger reflow
+        wrapEl.classList.add("shake-anim");
+        statusEl.textContent = "ACCESS DENIED — Incorrect 4-digit code! Check your checkpoint digits.";
+        statusEl.className = "text-xs font-semibold text-rose-400 mt-2.5 min-h-[1rem]";
+        state.keypadBuffer = "";
+        renderKeypadDisplay();
+      }
+    }
+
+    // Support physical keyboard typing on the Vault screen
+    document.addEventListener("keydown", function (e) {
+      const vaultVisible = !document.getElementById("screen-vault").classList.contains("hidden");
+      if (!vaultVisible) return;
+      if (e.key >= "0" && e.key <= "9") {
+        pressDigit(e.key);
+      } else if (e.key === "Backspace" || e.key.toLowerCase() === "c") {
+        clearKeypad();
+      } else if (e.key === "Enter") {
+        checkVaultCode();
+      }
+    });
+
+    // =========================================================================
+    // 7. COMPLETION SCREEN & CLIPBOARD EXPORT
+    // =========================================================================
+    function showCompletionScreen() {
+      document.getElementById("screen-vault").classList.add("hidden");
+      document.getElementById("screen-complete").classList.remove("hidden");
+
+      const nowStr = new Date().toLocaleString("en-GB", {
+        dateStyle: "medium",
+        timeStyle: "short"
+      });
+      const solvedCount = state.challengeStates.filter(s => s.solved).length;
+      const totalScore = state.baseScore + state.bonusScore - state.penaltyScore;
+
+      document.getElementById("summary-name").textContent = state.studentName;
+      document.getElementById("summary-class").textContent = state.studentClass;
+      document.getElementById("summary-date").textContent = nowStr;
+      document.getElementById("summary-completed").textContent = `${solvedCount} / ${CHALLENGES.length} solved correctly`;
+      document.getElementById("summary-base").textContent = `${state.baseScore} / 180 pts`;
+      document.getElementById("summary-bonus").textContent = `+${state.bonusScore} pts`;
+      document.getElementById("summary-penalty").textContent = state.penaltyScore > 0 ? `-${state.penaltyScore} pts` : "0 pts";
+      document.getElementById("summary-total").textContent = `${totalScore} pts`;
+    }
+
+    function copyResultsForTeacher() {
+      const nowStr = document.getElementById("summary-date").textContent;
+      const solvedCount = state.challengeStates.filter(s => s.solved).length;
+      const totalScore = state.baseScore + state.bonusScore - state.penaltyScore;
+
+      const report = [
+        "=== THE CLOCKWORK ARCHIVE (10th Grade ESL Escape Room) ===",
+        `Researcher(s): ${state.studentName}`,
+        `Class & Number: ${state.studentClass}`,
+        `Date & Time: ${nowStr}`,
+        `Vault Code Unlocked: ${SECRET_VAULT_CODE}`,
+        `Challenges Solved: ${solvedCount}/${CHALLENGES.length}`,
+        `Base Score: ${state.baseScore}/180 pts`,
+        `First-Try Bonuses: +${state.bonusScore} pts`,
+        `Penalties (Wrong/Hints): -${state.penaltyScore} pts`,
+        `FINAL TOTAL SCORE: ${totalScore} pts`
+      ].join("\n");
+
+      const textarea = document.createElement("textarea");
+      textarea.value = report;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand("copy");
+        document.getElementById("copy-toast").classList.remove("hidden");
+      } catch (err) {
+        console.error("Copy failed:", err);
+      }
+      document.body.removeChild(textarea);
+    }
+
+    // =========================================================================
+    // 8. HTML ESCAPING HELPERS
+    // =========================================================================
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function escapeAttr(str) {
+      return String(str).replace(/'/g, "\\'");
+    }
+  </script>
+</body>
+</html>
